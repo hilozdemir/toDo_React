@@ -25,6 +25,7 @@ Uygulamanın bazı ekran görüntüleri aşağıda örneklenmiştir:
 
 ### Görev Ekleme (Add new Butonu)
 <img src="screenshots/gorev-ekle.png" alt="Görev Ekleme" width="600" />
+<img src="screenshots/gorev-ekle2.png" alt="Görev Ekleme" width="600" />
 
 ### Görev Silme (Delete Butonu)
 <img src="screenshots/delete-gorev.png" alt="Görev Silme" width="600" />

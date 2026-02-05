@@ -15,31 +15,19 @@ Bu proje, React ile geliştirilmiş modern bir görev (to-do) yönetim uygulamas
 Uygulamanın bazı ekran görüntüleri aşağıda örneklenmiştir:
 
 ### Tüm Görevler
-![Tüm Görevler](screenshots/tum-gorevler.png)
-
 <img src="screenshots/tum-gorevler.png" alt="Tüm Görevler" width="600" />
 
 ### Tamamlanan Görevler
-![Tamamlanan Görevler](screenshots/tamamlanan-gorevler.png)
-
 <img src="screenshots/tamamlanan-gorevler.png" alt="Tamamlanan Görevler" width="600" />
 
 ### Arama Sonucu
-![Arama Sonucu](screenshots/arama-sonucu.png)
-
 <img src="screenshots/arama-sonucu.png" alt="Arama Sonucu" width="600" />
 
 ### Görev Ekleme (Add new Butonu)
-![Görev Ekleme](screenshots/gorev-ekle.png)
-
 <img src="screenshots/gorev-ekle.png" alt="Görev Ekleme" width="600" />
 
 ### Görev Silme (Delete Butonu)
-![Görev Silme](screenshots/delete-gorev.png)
-
 <img src="screenshots/delete-gorev.png" alt="Görev Silme" width="600" />
-
-> Not: Ekran görüntüleri için `screenshots` klasörü oluşturup, görselleri oraya ekleyebilirsiniz.
 
 ## Kurulum ve Çalıştırma
 1. Terminalde proje dizinine gelin:

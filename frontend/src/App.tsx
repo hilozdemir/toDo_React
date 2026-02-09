@@ -26,22 +26,26 @@ function App() {
     loadTodos()
   }, [])
 
-  const handleAddTodo = (text: string) => {
+  const handleAddTodo = async (text: string) => {
     const trimmed = text.trim()
     if (!trimmed) return
+    const tempId = Date.now()
     const newTodo: Todo = {
-      id: Date.now(),
+      id: tempId,
       text: trimmed,
       completed: false,
     }
-    // Optimistic update: önce state'i güncelle, sonra API'ye yaz
+    // Optimistic update
     setTodos((prev) => [newTodo, ...prev])
-    createTodo(newTodo).catch((err) => {
+    try {
+      const saved = await createTodo(newTodo)
+      // tempId ile eklenen todo'yu, backend'den dönen gerçek todo ile değiştir
+      setTodos((prev) => [saved, ...prev.filter((todo) => todo.id !== tempId)])
+    } catch (err) {
       console.error(err)
-      // Hata olursa geri al
-      setTodos((prev) => prev.filter((todo) => todo.id !== newTodo.id))
+      setTodos((prev) => prev.filter((todo) => todo.id !== tempId))
       setError('Görev kaydedilemedi.')
-    })
+    }
   }
 
   const handleToggle = (id: number) => {
@@ -67,16 +71,16 @@ function App() {
     }
   }
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
     const previous = todos
     setTodos((prev) => prev.filter((todo) => todo.id !== id))
-
-    deleteTodo(id).catch((err) => {
+    try {
+      await deleteTodo(id)
+    } catch (err) {
       console.error(err)
-      // Hata olursa eski listeyi geri yükle
       setTodos(previous)
       setError('Görev silinemedi.')
-    })
+    }
   }
 
   const handleSearch = (term: string) => {

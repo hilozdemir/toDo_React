@@ -10,12 +10,15 @@ Bu proje, verilen gereksinimlere uygun basit ama düzenli bir React To-Do uygula
 - Arama butonu ile filtreleme
 - Ortalanmış kart tasarımı, farklı tamamlanma stili
 
+
 ### Projeyi çalıştırma
 ```bash
 npm install
 npm run dev
 ```
 Vite varsayılan olarak `http://localhost:5173` adresinde ayağa kalkar.
+
+> **Not:** Backend artık SQLite veritabanı ile çalışmaktadır. Frontend tarafında ekstra bir ayar yapmanıza gerek yoktur. API adresini değiştirmek isterseniz `.env` dosyası ile `VITE_API_URL` tanımlayabilirsiniz.
 
 ### Kullanılan React yapıları
 - Functional components

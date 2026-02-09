@@ -1,18 +1,30 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import TodoInput from './components/TodoInput'
 import TodoList from './components/TodoList'
 import type { Todo } from './types'
-
-const seedTodos: Todo[] = [
-  { id: 1, text: 'Dokümantasyonun son halini paylaş', completed: true },
-  { id: 2, text: 'Design sistemi için kart bileşeni çıkar', completed: true },
-  { id: 3, text: 'Takımın yaptığı deployment problemini araştır', completed: false },
-  { id: 4, text: 'Yeni olacak görevlerle ilgili soru sor', completed: false },
-]
+import { createTodo, deleteTodo, fetchTodos, updateTodo } from './api'
 
 function App() {
-  const [todos, setTodos] = useState<Todo[]>(seedTodos)
+  const [todos, setTodos] = useState<Todo[]>([])
   const [searchTerm, setSearchTerm] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const loadTodos = async () => {
+      try {
+        const data = await fetchTodos()
+        setTodos(data)
+      } catch (err) {
+        console.error(err)
+        setError('Görevler yüklenemedi.')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadTodos()
+  }, [])
 
   const handleAddTodo = (text: string) => {
     const trimmed = text.trim()
@@ -22,7 +34,14 @@ function App() {
       text: trimmed,
       completed: false,
     }
+    // Optimistic update: önce state'i güncelle, sonra API'ye yaz
     setTodos((prev) => [newTodo, ...prev])
+    createTodo(newTodo).catch((err) => {
+      console.error(err)
+      // Hata olursa geri al
+      setTodos((prev) => prev.filter((todo) => todo.id !== newTodo.id))
+      setError('Görev kaydedilemedi.')
+    })
   }
 
   const handleToggle = (id: number) => {
@@ -31,10 +50,33 @@ function App() {
         todo.id === id ? { ...todo, completed: !todo.completed } : todo,
       ),
     )
+
+    const updated = todos.find((todo) => todo.id === id)
+    if (updated) {
+      const payload: Todo = { ...updated, completed: !updated.completed }
+      updateTodo(payload).catch((err) => {
+        console.error(err)
+        // Hata olursa lokal değişikliği geri al
+        setTodos((prev) =>
+          prev.map((todo) =>
+            todo.id === id ? { ...todo, completed: updated.completed } : todo,
+          ),
+        )
+        setError('Görev güncellenemedi.')
+      })
+    }
   }
 
   const handleDelete = (id: number) => {
+    const previous = todos
     setTodos((prev) => prev.filter((todo) => todo.id !== id))
+
+    deleteTodo(id).catch((err) => {
+      console.error(err)
+      // Hata olursa eski listeyi geri yükle
+      setTodos(previous)
+      setError('Görev silinemedi.')
+    })
   }
 
   const handleSearch = (term: string) => {
@@ -48,6 +90,10 @@ function App() {
     )
   }, [searchTerm, todos])
 
+  if (loading) {
+    return <main className="card">Görevler yükleniyor...</main>
+  }
+
   return (
     <main className="card">
       <div className="header">
@@ -59,6 +105,11 @@ function App() {
       </div>
 
       <div className="stack">
+        {error ? (
+          <div style={{ color: '#ef4444', marginBottom: '0.5rem' }}>
+            {error}
+          </div>
+        ) : null}
         <TodoInput onAddTodo={handleAddTodo} onSearch={handleSearch} />
         <TodoList
           todos={filteredTodos}
